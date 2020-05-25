@@ -1,8 +1,10 @@
 const express = require('express');
 const morgan = require('morgan');
 
+
 const app = express();
 const port = process.env.PORT || 8000;
+// const api = require('./api');
 
 app.use(morgan('dev'));
 
@@ -14,7 +16,7 @@ app.use(express.static('public'));
  * top-level router lives in api/index.js.  That's what we include here, and
  * it provides all of the routes.
  */
-
+// app.use('/', api);
 app.use('*', function (req, res, next) {
     res.status(404).json({
         error: "Requested resource " + req.originalUrl + " does not exist"
