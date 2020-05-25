@@ -1,0 +1,27 @@
+{
+  "name": "final-project-cloud",
+  "version": "1.0.0",
+  "description": "final project for cs493 - spring 2020",
+  "main": "server.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/osu-cs493-sp20/final-project-cloud.git"
+  },
+  "author": "Bambleton, Chew, Nguyen, & Rey-Rosa",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/osu-cs493-sp20/final-project-cloud/issues"
+  },
+  "homepage": "https://github.com/osu-cs493-sp20/final-project-cloud#readme"
+}
