@@ -34,7 +34,7 @@ exports.insertNewUser = async (user) => {
   const result = await collection.insertOne(newUser);
 
   //return users id from insertion
-  return result.insertId;
+  return result.insertedId;
 };
 
 /*
@@ -49,7 +49,7 @@ exports.getUserInfoById = async (id) => {
 
   if (ObjectId.isValid(id)) {
     //get user info from Users collection
-    const results = await user_collection.find({ _id: new ObjectID(id) })
+    const results = await user_collection.find({ _id: new ObjectId(id) })
         .project({ password: 0 })
         .toArray();
 
@@ -59,13 +59,13 @@ exports.getUserInfoById = async (id) => {
     //  TODO: change roles to enum values
     if (user.role === 'instructor') {
       //get courses with this userId
-      const courses = await courses_collection.find({ instructorId: new ObjectID(id) })
+      const courses = await courses_collection.find({ instructorId: new ObjectId(id) })
         .toArray();
 
       user['courses'] = courses;
 
     } else if (user.role === 'student') {
-      const courses = await courses_collection.find({ studentId: new ObjectID(id) })
+      const courses = await courses_collection.find({ studentId: new ObjectId(id) })
         .toArray();
 
       user['courses'] = courses;
