@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "12a8545b-7cc6-4aa3-a137-0e3d374af709",
+		"_postman_id": "d4e31775-5fea-4aab-aba1-900b7c348dbf",
 		"name": "Tarpaulin Tests",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -97,6 +97,76 @@
 							],
 							"path": [
 								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Rate Limiting",
+			"item": [
+				{
+					"name": "Test Limit",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "87bcf9ec-f131-4b6c-b7cb-d7d07ff5247b",
+								"exec": [
+									"\r",
+									"if (!pm.environment.has(\"counter\")) {\r",
+									"    console.log(\"Setting counter now\");\r",
+									"    pm.environment.set(\"counter\", 0);\r",
+									" }\r",
+									"\r",
+									" if(!pm.environment.has(\"rateLimit\")){\r",
+									"     pm.environment.set(\"rateLimit\", 10);\r",
+									" }\r",
+									" \r",
+									"let currentCount = parseInt(pm.environment.get(\"counter\")); \r",
+									"let numberOfLoops = parseInt(pm.environment.get(\"rateLimit\"));\r",
+									"\r",
+									"if (currentCount < numberOfLoops) {\r",
+									"    postman.setNextRequest(\"Test Limit\");\r",
+									"}\r",
+									"\r",
+									"\r",
+									"currentCount++;\r",
+									"pm.environment.set(\"counter\", currentCount);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "0fa70604-be73-44aa-851d-ad5b26471a53",
+								"exec": [
+									"pm.test(\"Rate Limit Reached\", function(){\r",
+									"    if(parseInt(pm.environment.get(\"counter\")) == parseInt(pm.environment.get(\"counter\")))\r",
+									"        pm.expect(pm.response.code).to.be.oneOf([429]);\r",
+									"    else\r",
+									"        pm.expect(pm.response.code).to.be.oneOf([401, 200, 201, 500, 403, 404]);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"login"
 							]
 						}
 					},
