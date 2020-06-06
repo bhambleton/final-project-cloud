@@ -1,0 +1,22 @@
+#!/bin/bash
+sudo apt update
+sudo apt install git
+git clone https://github.com/osu-cs493-sp20/final-project-cloud.git
+sudo chmod -R a+rwx final-project-cloud/
+
+# Install Docker
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo apt-get update
+apt-cache policy docker-ce
+sudo apt-get install -y docker-ce
+
+# Install Docker compose
+sudo curl -L "https://github.com/docker/compose/releases/download/1.25.5/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose && \
+sudo chmod +x /usr/local/bin/docker-compose && \
+docker-compose --version && \
+
+# Run docker compose up
+cd final-project-cloud/
+sudo docker-compose build
+sudo docker-compose up
