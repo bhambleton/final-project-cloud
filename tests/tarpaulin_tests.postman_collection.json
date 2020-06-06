@@ -1,0 +1,110 @@
+{
+	"info": {
+		"_postman_id": "12a8545b-7cc6-4aa3-a137-0e3d374af709",
+		"name": "Tarpaulin Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "user login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"alison.wonderland@tarpaulin.com\",\n\t\"password\": \"beaverfun123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user info",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWRhYjI3MTZhZTEyYzAwMTI5NWJhZjQiLCJyb2xlIjoic3R1ZGVudCIsImlhdCI6MTU5MTM5MDg1NSwiZXhwIjoxNTkxNDc3MjU1fQ.nK_vv_H5A9LryALkpGDFkelney93tvo8fR_9ArSGV7g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImFkbWluIjowLCJpYXQiOjE1ODk3NTg5NzMsImV4cCI6MTU4OTg0NTM3M30.CD1-ln1yZ4D67_llCacjkruMcd9ApruN91wkbzGpVYY",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users/:userid",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								":userid"
+							],
+							"variable": [
+								{
+									"key": "userid",
+									"value": "5edab2716ae12c001295baf4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add a new user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Alison Wonderland\",\n\t\"password\": \"beaverfun123\",\n\t\"email\": \"alison.wonderland@tarpaulin.com\",\n\t\"role\": \"student\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
