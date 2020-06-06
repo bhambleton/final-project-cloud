@@ -5,10 +5,12 @@ const { generateAuthToken, requireAuthentication, checkAuthentication } = requir
 
 const {
   UserSchema,
+  UserRoles,
   insertNewUser,
   getUserByEmail,
   getUserInfoById,
-  validateUser
+  validateUser,
+  containsEmail
 } = require('../models/user');
 
 
@@ -47,17 +49,23 @@ router.post('/login', async (req, res) => {
 
 // Creating  a new User
 router.post('/', checkAuthentication, async (req, res,next) => {
-  if (validateAgainstSchema(req.body, UserSchema)) {
+  if (validateAgainstSchema(req.body, UserSchema) && UserRoles.includes(req.body.role.toLowerCase())) {
     try {
-      if ((req.body.role === 'admin' || req.body.role === 'instructor') && req.role !== 'admin') {
+      if ((req.body.role.toLowerCase() === 'admin' || req.body.role.toLowerCase() === 'instructor') && req.role !== 'admin') {
         res.status(401).send({
           error: "User not authorized to create a user with those privileges."
         });
       } else {
-        const id = await insertNewUser(req.body);
-        res.status(201).send({
-          userId: id
-        });
+        if (await containsEmail(req.body.email)) {
+          res.status(400).send({
+            error: "Request body contains an invalid field."
+          });
+        } else {
+          const id = await insertNewUser(req.body);
+          res.status(201).send({
+            userId: id
+          });
+        }
       }
     } catch (err) {
       console.error(" == Error:", err);

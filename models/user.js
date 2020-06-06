@@ -15,6 +15,9 @@ const UserSchema = {
 };
 exports.UserSchema = UserSchema;
 
+const UserRoles = ["student", "instructor", "admin"];
+exports.UserRoles = UserRoles;
+
 /*
  * Insert new user into DB
  */
@@ -26,6 +29,8 @@ exports.insertNewUser = async (user) => {
     newUser.password,
     8
   );
+
+  newUser.role = newUser.role.toLowerCase();
 
   const db = getDBReference();
   const collection = db.collection('Users');
@@ -94,6 +99,19 @@ exports.getUserByEmail = async (email, includePassword) => {
 
 };
 
+exports.containsEmail = async (email) => {
+  const db = getDBReference();
+  const collection = db.collection('Users');
+  const projection = { password: 0 };
+
+  const result = await collection.find({ email: email})
+    .project(projection)
+    .limit(1)
+    .toArray();
+
+  return result.length > 0;
+};
+
 //checks password with hash of password stored in DB
 // if they match, return user id and role
 exports.validateUser = async (email, password) => {
@@ -104,4 +122,4 @@ exports.validateUser = async (email, password) => {
   } else {
     return null;
   }
-}
+};
