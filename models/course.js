@@ -68,6 +68,20 @@ async function updateCourse(id, course) {
 }
 exports.updateCourse = updateCourse;
 
+async function updateCourseEnrollment(id, course) {
+    // course = extractValidFields(course, CourseSchema);
+    console.log("==course", course);
+    // const db = getDBReference();
+    // const collection = db.collection('Courses');
+    // const result = await collection.updateOne(
+    //     { _id: ObjectId(id) },
+    //     { $set: course }
+    // );
+    // console.log("==result", result);
+    // return id;
+}
+exports.updateCourseEnrollment = updateCourseEnrollment;
+
 async function getCourseById(id) {
     const db = getDBReference();
     const collection = db.collection('Courses');

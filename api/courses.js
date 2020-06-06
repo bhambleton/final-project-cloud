@@ -10,7 +10,8 @@ const {
     getCoursesPage,
     deleteCourseById,
     getTeacherIdByCourseId,
-    updateCourse
+    updateCourse,
+    updateCourseEnrollment
 } = require('../models/course');
 
 //Get all courses
@@ -69,7 +70,36 @@ router.post('/', checkAuthentication, async (req, res) => {
 
     }
 });
+router.post('/:id/students', async (req, res, next) => {
+    const teacherID = await getTeacherIdByCourseId(req.params.id);
+    if (req.role == 'admin' || req.user != teacherID) {
+        if(req.body.add || req.body.remove){
+            try {
+                const id = await updateCourseEnrollment(req.params.id, req.body);
+                res.status(201).send({
+                    id: id,
+                    links: {
+                        Course: `/Courses/${id}`
+                    }
+                });
+            } catch (err) {
+                console.error(err);
+                res.status(500).send({
+                    error: "Error updating Course enrollment.  Please try again later."
+                });
+            }
+        }else{
+            res.status(400).send({
+                error: "Invalid body for updating enrollment."
+            });
+        }
+    } else {
+        res.status(403).send({
+            error: "Invalid permissions."
+        });
 
+    }
+});
 // router.get('/:id/students', async (req, res, next) => {
 //     try {
 //         const Course = await getCourseStudentsById(req.params.id);
