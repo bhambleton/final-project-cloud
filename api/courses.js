@@ -8,7 +8,9 @@ const {
     getCourseStudentsById,
     getCourseAssignmentsById,
     getCoursesPage,
-    deleteCourseById
+    deleteCourseById,
+    getTeacherIdByCourseId,
+    updateCourse
 } = require('../models/course');
 
 //Get all courses
@@ -114,6 +116,37 @@ router.get('/:id', async (req, res, next) => {
         res.status(500).send({
             error: "Unable to fetch Course.  Please try again later."
         });
+    }
+});
+
+router.patch('/:id', requireAuthentication, async (req, res, next) => {
+    const teacherID = await getTeacherIdByCourseId(req.params.id);
+    if (req.role == 'admin' || req.user != teacherID) {
+        if (req.body.subject || req.body.number || req.body.title || req.body.instructorID || req.body.term){
+            try {
+                const id = await updateCourse(req.params.id, req.body);
+                res.status(201).send({
+                    id: id,
+                    links: {
+                        Course: `/Courses/${id}`
+                    }
+                });
+            } catch (err) {
+                console.error(err);
+                res.status(500).send({
+                    error: "Error updating Course.  Please try again later."
+                });
+            }
+        }else{
+            res.status(400).send({
+                error: "Invalid body."
+            });
+        }
+    } else {
+        res.status(403).send({
+            error: "Invalid permissions."
+        });
+
     }
 });
 

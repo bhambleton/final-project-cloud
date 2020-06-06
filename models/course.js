@@ -54,6 +54,20 @@ async function insertNewCourse(course) {
 }
 exports.insertNewCourse = insertNewCourse;
 
+async function updateCourse(id, course) {
+    course = extractValidFields(course, CourseSchema);
+    console.log("==course", course);
+    const db = getDBReference();
+    const collection = db.collection('Courses');
+    const result = await collection.updateOne(
+        { _id: ObjectId(id)},
+        { $set: course}
+        );
+    console.log("==result", result);
+    return id;
+}
+exports.updateCourse = updateCourse;
+
 async function getCourseById(id) {
     const db = getDBReference();
     const collection = db.collection('Courses');
@@ -108,6 +122,16 @@ async function getCourseAssignmentsById(id) {
     return Course;
 }
 exports.getCourseAssignmentsById = getCourseAssignmentsById;
+
+async function getTeacherIdByCourseId(id) {
+    /*
+     * Execute three sequential queries to get all of the info about the
+     * specified Course, including its photos.
+     */
+    const Course = await getCourseById(id);
+    return Course.instructorID;
+}
+exports.getTeacherIdByCourseId = getTeacherIdByCourseId;
 
 async function getCourseById(id) {
     const db = getDBReference();
