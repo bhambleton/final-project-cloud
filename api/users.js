@@ -109,7 +109,7 @@ router.get('/:id', requireAuthentication, async (req, res, next) => {
 
 // Get a list of users
 router.get('/', requireAuthentication, async (req, res, next) => {
-  if (req.role !== 'admin') {
+  if (req.role == 'admin') {
     try {
       const users = await getUsers(); 
 
