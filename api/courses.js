@@ -149,6 +149,13 @@ router.post('/:id/students', checkAuthentication, async (req, res, next) => {
             await csvWriter.writeRecords(students);
             res.status(200).type("text/csv");
             fs.createReadStream("./file.csv").pipe(res);
+            fs.unlink('./file.csv', function(err) {
+                if(err && err.code == 'ENOENT') {
+                    console.info("File doesn't exist, won't remove it.");
+                } else if (err) {
+                    console.error("Error occurred while trying to remove file");
+                }
+            });
          } else {
              next();
          }
