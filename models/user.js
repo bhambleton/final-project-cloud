@@ -76,7 +76,7 @@ exports.getUserInfoById = async (id) => {
       user['courses'] = courses;
     }
 
-    return user
+    return user;
   } else {
     return null;
   }
@@ -98,6 +98,26 @@ exports.getUsers = async () => {
 
     return results; 
 };
+
+/*
+ * Get User based on a projection
+ *
+ */
+exports.getUserProjById = async (id, projection) => {
+  const db = getDBReference();
+  const user_collection = db.collection('Users');
+
+  if (ObjectId.isValid(id)) {
+    //get user info from Users collection
+   const results = await user_collection.find({ _id: new ObjectId(id) })
+       .project(projection)
+       .toArray();
+       return results; 
+  }else {
+   return null; 
+  }
+};
+
 
 exports.getUserByEmail = async (email, includePassword) => {
   const db = getDBReference();

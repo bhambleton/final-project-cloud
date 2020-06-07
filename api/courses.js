@@ -140,6 +140,7 @@ router.post('/:id/students', checkAuthentication, async (req, res, next) => {
         
          if (Course) {
             const students = await getStudentsInCourse(Course);
+           
             await csvWriter.writeRecords(students);
             res.status(200).type("text/csv");
             fs.createReadStream("./file.csv").pipe(res);
