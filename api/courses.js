@@ -5,7 +5,6 @@ const {
     CourseSchema,
     insertNewCourse,
     getCourseById,
-    getCourseStudentsById,
     getCourseAssignmentsById,
     getCoursesPage,
     deleteCourseById,
@@ -70,6 +69,8 @@ router.post('/', checkAuthentication, async (req, res) => {
 
     }
 });
+
+// Update the enrollment for a course
 router.post('/:id/students', checkAuthentication, async (req, res, next) => {
     const course = await getCourseById(req.params.id);
     if(!course)
@@ -98,21 +99,25 @@ router.post('/:id/students', checkAuthentication, async (req, res, next) => {
 
     }
 });
-// router.get('/:id/students', async (req, res, next) => {
-//     try {
-//         const Course = await getCourseStudentsById(req.params.id);
-//         if (Course) {
-//             res.status(200).send(Course);
-//         } else {
-//             next();
-//         }
-//     } catch (err) {
-//         console.error(err);
-//         res.status(500).send({
-//             error: "Unable to fetch Course's students.  Please try again later."
-//         });
-//     }
-// });
+
+// Get all of the students in a course
+ router.get('/:id/students', async (req, res, next) => {
+     try {
+         const Course = await getCourseById(req.params.id);
+         if (Course) {
+             res.status(200).send({
+                 students: Course.students
+             });
+         } else {
+             next();
+         }
+     } catch (err) {
+         console.error(err);
+         res.status(500).send({
+             error: "Unable to fetch Course's students.  Please try again later."
+         });
+     }
+  });
 
 // router.get('/:id/assignments', async (req, res, next) => {
 //     try {
@@ -147,6 +152,7 @@ router.get('/:id', async (req, res, next) => {
     }
 });
 
+// Partial update of a course (no students or assignments)
 router.patch('/:id', requireAuthentication, async (req, res, next) => {
     const teacherID = await getTeacherIdByCourseId(req.params.id);
     if (req.role == 'admin' || req.user != teacherID) {
@@ -178,6 +184,7 @@ router.patch('/:id', requireAuthentication, async (req, res, next) => {
     }
 });
 
+// Delete a course
 router.delete('/:id', checkAuthentication, async (req, res,next) => {
     if (req.role == 'admin') {
         try{

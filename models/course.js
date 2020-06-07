@@ -104,26 +104,6 @@ async function getCourseById(id) {
 }
 exports.getCourseById = getCourseById;
 
-async function getCourseStudentsById(id) {
-    /*
-     * Execute three sequential queries to get all of the info about the
-     * specified Course, including its photos.
-     */
-    const Course = await getCourseById(id);
-    responseBody = []
-    if (Course) {
-        student = await getStudentsByCourseId(id);
-
-        for (i = 0; i < student.length; i++) {
-            id = student[i]._id
-            responseBody.push(`id: ${id}`)
-        }
-    }
-    Course.students = responseBody
-    return Course;
-}
-exports.getCourseStudentsById = getCourseStudentsById;
-
 
 async function getCourseAssignmentsById(id) {
     /*
@@ -163,6 +143,7 @@ async function getCourseById(id) {
     } else {
         const results = await collection
             .find({ _id: new ObjectId(id) })
+            .project({ students: 0 })
             .toArray();
         return results[0];
     }
