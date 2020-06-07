@@ -2,7 +2,7 @@ const { ObjectId } = require('mongodb');
 
 const { getDBReference } = require('../lib/mongo');
 const { extractValidFields } = require('../lib/validation');
-// Get student by Id :) const { getStudentByCourseId } = require('./student');
+// Get student by Id :) const { getStudentsByCourseId } = require('./student');
 // Get assignment by Id :) const { getAssignmentyCourseId } = require('./assignment');
 
 const CourseSchema = {
@@ -104,7 +104,7 @@ async function getCourseStudentsById(id) {
     const Course = await getCourseById(id);
     responseBody = []
     if (Course) {
-        student = await getStudentByCourseId(id);
+        student = await getStudentsByCourseId(id);
 
         for (i = 0; i < student.length; i++) {
             id = student[i]._id
