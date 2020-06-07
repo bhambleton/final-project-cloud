@@ -50,6 +50,7 @@ async function insertNewCourse(course) {
     const db = getDBReference();
     const collection = db.collection('Courses');
     const result = await collection.insertOne(course);
+    db.collection.update({'students': {$exists : false}}, {$set: {'students': []}});
     return result.insertedId;
 }
 exports.insertNewCourse = insertNewCourse;
@@ -69,16 +70,27 @@ async function updateCourse(id, course) {
 exports.updateCourse = updateCourse;
 
 async function updateCourseEnrollment(id, course) {
-    // course = extractValidFields(course, CourseSchema);
     console.log("==course", course);
-    // const db = getDBReference();
-    // const collection = db.collection('Courses');
-    // const result = await collection.updateOne(
-    //     { _id: ObjectId(id) },
-    //     { $set: course }
-    // );
-    // console.log("==result", result);
-    // return id;
+     const db = getDBReference();
+     const collection = db.collection('Courses');
+     
+     if(course.add){
+        const result = await collection.updateOne(
+            { _id: ObjectId(id) },
+            { $push: {"students" : {$each: course.add }}}
+        );
+        console.log("==result", result);
+    }
+
+    if(course.remove){
+        const result = await collection.updateOne(
+            { _id: ObjectId(id) },
+            { $pullAll: { "students" : course.remove }}
+        );
+        console.log("==result", result);
+    }
+     
+    return id;
 }
 exports.updateCourseEnrollment = updateCourseEnrollment;
 

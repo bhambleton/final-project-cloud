@@ -70,18 +70,14 @@ router.post('/', checkAuthentication, async (req, res) => {
 
     }
 });
-router.post('/:id/students', async (req, res, next) => {
+router.post('/:id/students', checkAuthentication, async (req, res, next) => {
     const teacherID = await getTeacherIdByCourseId(req.params.id);
-    if (req.role == 'admin' || req.user != teacherID) {
+    if (req.role == 'admin' || req.user == teacherID) {
         if(req.body.add || req.body.remove){
             try {
                 const id = await updateCourseEnrollment(req.params.id, req.body);
-                res.status(201).send({
-                    id: id,
-                    links: {
-                        Course: `/Courses/${id}`
-                    }
-                });
+                const course = await getCourseById(id);
+                res.status(200).send();
             } catch (err) {
                 console.error(err);
                 res.status(500).send({
