@@ -114,6 +114,7 @@ async function getTeacherIdByCourseId(id) {
 }
 exports.getTeacherIdByCourseId = getTeacherIdByCourseId;
 
+// Get course information without students and assignments
 async function getCourseInfoById(id) {
     const db = getDBReference();
     const collection = db.collection('Courses');
@@ -122,7 +123,7 @@ async function getCourseInfoById(id) {
     } else {
         const results = await collection
             .find({ _id: new ObjectId(id) })
-            .project({ students: 0 })
+            .project({ students: 0, assignments: 0 })
             .toArray();
         return results[0];
     }
