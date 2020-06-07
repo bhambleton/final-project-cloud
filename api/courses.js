@@ -5,7 +5,7 @@ const {
     CourseSchema,
     insertNewCourse,
     getCourseById,
-    getCourseAssignmentsById,
+    getCourseInfoById,
     getCoursesPage,
     deleteCourseById,
     getTeacherIdByCourseId,
@@ -106,7 +106,7 @@ router.post('/:id/students', checkAuthentication, async (req, res, next) => {
          const Course = await getCourseById(req.params.id);
          if (Course) {
              res.status(200).send({
-                 students: Course.students
+                 "students": Course.students
              });
          } else {
              next();
@@ -124,7 +124,7 @@ router.get('/:id/assignments', async (req, res, next) => {
          const Course = await getCourseById(req.params.id);
          if (Course) {
              res.status(200).send({
-                 assignments: Course.assignments
+                 "assignments": Course.assignments
              });
          } else {
              next();
@@ -140,7 +140,7 @@ router.get('/:id/assignments', async (req, res, next) => {
 // Fetch Info about specific course (w/out assignments & students enrolled)
 router.get('/:id', async (req, res, next) => {
     try {
-        const Course = await getCourseById(req.params.id);
+        const Course = await getCourseInfoById(req.params.id);
         if (Course) {
             res.status(200).send(Course);
         } else {
