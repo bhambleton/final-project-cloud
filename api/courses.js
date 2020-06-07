@@ -3,7 +3,7 @@ const { validateAgainstSchema } = require('../lib/validation');
 const { generateAuthToken, requireAuthentication, checkAuthentication } = require('../lib/auth');
 const { createObjectCsvWriter } = require('csv-writer');
 const fs = require('fs');
-const csvWriter = createCsvWriter({
+const csvWriter = createObjectCsvWriter({
     path: './file.csv'
 });
 const {
