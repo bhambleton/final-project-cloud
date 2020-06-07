@@ -132,7 +132,7 @@ router.post('/:id/students', checkAuthentication, async (req, res, next) => {
   });
 
   // Get a roster of a course (.csv)
- router.get('/:id/students', checkAuthentication, async (req, res, next) => {
+ router.get('/:id/roster', checkAuthentication, async (req, res, next) => {
     const teacherID = await getTeacherIdByCourseId(req.params.id);
     if (req.role == 'admin' || req.user == teacherID) {
      try {
