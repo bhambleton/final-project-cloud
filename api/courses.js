@@ -1,11 +1,17 @@
 const router = require('express').Router();
 const { validateAgainstSchema } = require('../lib/validation');
 const { generateAuthToken, requireAuthentication, checkAuthentication } = require('../lib/auth');
+const { createObjectCsvWriter } = require('csv-writer');
+const fs = require('fs');
+const csvWriter = createCsvWriter({
+    path: './file.csv'
+});
 const {
     CourseSchema,
     insertNewCourse,
     getCourseById,
     getCourseInfoById,
+    getStudentsInCourse,
     getCoursesPage,
     deleteCourseById,
     getTeacherIdByCourseId,
@@ -125,6 +131,35 @@ router.post('/:id/students', checkAuthentication, async (req, res, next) => {
     }
   });
 
+  // Get a roster of a course (.csv)
+ router.get('/:id/students', checkAuthentication, async (req, res, next) => {
+    const teacherID = await getTeacherIdByCourseId(req.params.id);
+    if (req.role == 'admin' || req.user == teacherID) {
+     try {
+         const Course = await getCourseById(req.params.id);
+        
+         if (Course) {
+            const students = await getStudentsInCourse(Course);
+            await csvWriter.writeRecords(students);
+            res.status(200).type("text/csv");
+            fs.createReadStream("./file.csv").pipe(res);
+         } else {
+             next();
+         }
+     } catch (err) {
+         console.error(err);
+         res.status(500).send({
+             error: "Unable to fetch Course's students.  Please try again later."
+         });
+     }
+    } else {
+        res.status(403).send({
+            error: "Invalid permissions."
+        });
+    }
+  });
+
+  // Get all of the assignments for a course
 router.get('/:id/assignments', async (req, res, next) => {
      try {
          const Course = await getCourseById(req.params.id);

@@ -2,9 +2,7 @@ const { ObjectId } = require('mongodb');
 
 const { getDBReference } = require('../lib/mongo');
 const { extractValidFields } = require('../lib/validation');
-// Get student by Id :) const { getStudentsByCourseId } = require('./student');
-// Get assignment by Id :) const { getAssignmentyCourseId } = require('./assignment');
-
+const {getUserInfoById} = require('./user');
 const CourseSchema = {
     subject: { required: true },
     number: { required: true },
@@ -104,10 +102,22 @@ async function getCourseById(id) {
 }
 exports.getCourseById = getCourseById;
 
+async function getStudentsInCourse(course){
+    students = []
+
+    for(var studentId in course.students){
+        var student = await getUserInfoById(studentId);
+        students.push(student);
+    }
+
+    return students; 
+}
+exports.getStudentsInCourse = getStudentsInCourse;
+
 async function getTeacherIdByCourseId(id) {
     /*
      * Execute three sequential queries to get all of the info about the
-     * specified Course, including its photos.
+     * specified Course.
      */
     const Course = await getCourseById(id);
     return Course.instructorID;
