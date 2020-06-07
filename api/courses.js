@@ -119,21 +119,23 @@ router.post('/:id/students', checkAuthentication, async (req, res, next) => {
      }
   });
 
-// router.get('/:id/assignments', async (req, res, next) => {
-//     try {
-//         const Course = await getCourseAssignmentsById(req.params.id);
-//         if (Course) {
-//             res.status(200).send(Course);
-//         } else {
-//             next();
-//         }
-//     } catch (err) {
-//         console.error(err);
-//         res.status(500).send({
-//             error: "Unable to fetch Course's assignments.  Please try again later."
-//         });
-//     }
-// });
+router.get('/:id/assignments', async (req, res, next) => {
+     try {
+         const Course = await getCourseById(req.params.id);
+         if (Course) {
+             res.status(200).send({
+                 assignments: Course.assignments
+             });
+         } else {
+             next();
+         }
+     } catch (err) {
+         console.error(err);
+         res.status(500).send({
+             error: "Unable to fetch Course's assignments.  Please try again later."
+         });
+     }
+});
 
 // Fetch Info about specific course (w/out assignments & students enrolled)
 router.get('/:id', async (req, res, next) => {
