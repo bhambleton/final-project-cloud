@@ -96,12 +96,13 @@ router.post('/:id/students', checkAuthentication, async (req, res, next) => {
         res.status(403).send({
             error: "Invalid permissions."
         });
-
     }
 });
 
 // Get all of the students in a course
- router.get('/:id/students', async (req, res, next) => {
+ router.get('/:id/students', checkAuthentication, async (req, res, next) => {
+    const teacherID = await getTeacherIdByCourseId(req.params.id);
+    if (req.role == 'admin' || req.user == teacherID) {
      try {
          const Course = await getCourseById(req.params.id);
          if (Course) {
@@ -117,6 +118,11 @@ router.post('/:id/students', checkAuthentication, async (req, res, next) => {
              error: "Unable to fetch Course's students.  Please try again later."
          });
      }
+    } else {
+        res.status(403).send({
+            error: "Invalid permissions."
+        });
+    }
   });
 
 router.get('/:id/assignments', async (req, res, next) => {
