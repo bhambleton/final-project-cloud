@@ -211,7 +211,7 @@ router.get('/:id', async (req, res, next) => {
 // Partial update of a course (no students or assignments)
 router.patch('/:id', requireAuthentication, async (req, res, next) => {
     const teacherID = await getTeacherIdByCourseId(req.params.id);
-    if (req.role == 'admin' || req.user != teacherID) {
+    if (req.role == 'admin' || req.user == teacherID) {
         if (req.body.subject || req.body.number || req.body.title || req.body.instructorID || req.body.term){
             try {
                 const id = await updateCourse(req.params.id, req.body);
