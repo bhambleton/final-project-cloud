@@ -3,14 +3,6 @@ const { validateAgainstSchema } = require('../lib/validation');
 const { generateAuthToken, requireAuthentication, checkAuthentication } = require('../lib/auth');
 const { createObjectCsvWriter } = require('csv-writer');
 const fs = require('fs');
-const csvWriter = createObjectCsvWriter({
-    path: './file.csv',
-    header: [
-        {id: '_id', title: 'ID'},
-        {id: 'name', title: 'NAME'},
-        {id: 'email', title: 'EMAIL'}
-    ]
-});
 const {
     CourseSchema,
     insertNewCourse,
@@ -145,10 +137,6 @@ router.post('/:id/students', checkAuthentication, async (req, res, next) => {
         
          if (Course) {
             const students = await getStudentsInCourse(Course);
-           
-            await csvWriter.writeRecords(students);
-            res.status(200).type("text/csv");
-            fs.createReadStream("./file.csv").pipe(res);
             fs.unlink('./file.csv', function(err) {
                 if(err && err.code == 'ENOENT') {
                     console.info("File doesn't exist, won't remove it.");
@@ -156,6 +144,18 @@ router.post('/:id/students', checkAuthentication, async (req, res, next) => {
                     console.error("Error occurred while trying to remove file");
                 }
             });
+            const csvWriter = createObjectCsvWriter({
+                path: './file.csv',
+                header: [
+                    {id: '_id', title: 'ID'},
+                    {id: 'name', title: 'NAME'},
+                    {id: 'email', title: 'EMAIL'}
+                ]
+            });
+            await csvWriter.writeRecords(students);
+            res.status(200).type("text/csv");
+            fs.createReadStream("./file.csv").pipe(res);
+            
          } else {
              next();
          }
