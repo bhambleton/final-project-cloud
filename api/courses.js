@@ -4,7 +4,8 @@ const { generateAuthToken, requireAuthentication, checkAuthentication } = requir
 const { createObjectCsvWriter } = require('csv-writer');
 const fs = require('fs');
 const csvWriter = createObjectCsvWriter({
-    path: './file.csv'
+    path: './file.csv',
+    header: ["Id", "Name", "Email"]
 });
 const {
     CourseSchema,

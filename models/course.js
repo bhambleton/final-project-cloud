@@ -104,11 +104,12 @@ exports.getCourseById = getCourseById;
 
 async function getStudentsInCourse(course){
     students = []
-    project = {courses: 0, _id: 0, role: 0 }
+    project = {courses: 0, role: 0, password: 0 }
     for(var index in course.students){
-        var student = await getUserInfoById(course.students[index], project);
+        var student = await getUserProjById(course.students[index], project);
         console.log(student);
-        students.push(student);
+        if(student)
+            students.push(student[0]);
     }
 
     return students; 
