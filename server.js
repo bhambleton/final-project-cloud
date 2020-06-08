@@ -3,14 +3,15 @@ const morgan = require('morgan');
 
 const api = require('./api');
 const { connectToDB } = require('./lib/mongo');
+const { rateLimit } = require('./lib/rateLimit');
 
 const app = express();
 const port = process.env.PORT || 8000;
 
 app.use(morgan('dev'));
-
 app.use(express.json());
 app.use(express.static('public'));
+app.use(rateLimit);
 
 /*
  * All routes for the API are written in modules in the api/ directory.  The
