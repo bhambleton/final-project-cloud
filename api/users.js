@@ -49,6 +49,9 @@ router.post('/login', async (req, res) => {
 
 // Creating  a new User
 router.post('/', checkAuthentication, async (req, res,next) => {
+  if (req.body.role == undefined) {
+    req.body.role = 'student';
+  }
   if (validateAgainstSchema(req.body, UserSchema) && UserRoles.includes(req.body.role.toLowerCase())) {
     try {
       if ((req.body.role.toLowerCase() === 'admin' || req.body.role.toLowerCase() === 'instructor') && req.role !== 'admin') {

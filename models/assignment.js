@@ -29,7 +29,7 @@ exports.isInstructor = async (userId) => {
         .toArray();
     let user = results[0];
     
-    if (user.role === 'instructor') {  //get courses with this userId
+    if (user != undefined && user.role === 'instructor') {  //get courses with this userId
       const courses = await courses_collection.find({ instructorId: userId })
         .toArray();
       
