@@ -16,19 +16,3 @@ db.Users.insertMany([
       "role": "student"
   }
 ])
-
-
-// to test our assignments-firsthalf routes
-//
-// After calling the POST /users route, run this insertOne to the mongoDB shell before testing the assignments-firsthalf routes
-/*
-db.Courses.insertOne(
-  {
-    "subject": "MATH",
-    "number": 123,
-    "title": "Discrete",
-    "instructorId": "...",  // fill ... with the returned userId from POST /users (make a new Instructor)
-    "term": "fall 202"
-  }
-)
-*/
