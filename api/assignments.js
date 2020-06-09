@@ -4,6 +4,10 @@ const { requireAuthentication } = require('../lib/auth');
 
 const {
     AssignmentSchema,
+    PatchSchema1,
+    PatchSchema2,
+    PatchSchema3,
+    PatchSchema4,
     isInstructor,
     insertNewAssignment,
     getAssignmentById,
@@ -68,7 +72,8 @@ router.get('/:assignmentid', async (req, res, next) => {
 
 // Update data for a specific Assignment
 router.patch('/:assignmentid', requireAuthentication, async (req, res, next) => {
-    if (validateAgainstSchema(req.body, AssignmentSchema)) {    
+    if (validateAgainstSchema(req.body, PatchSchema1) || validateAgainstSchema(req.body, PatchSchema2) || 
+     validateAgainstSchema(req.body, PatchSchema3) || validateAgainstSchema(req.body, PatchSchema4)) {    
         if (req.role == "admin" || await isInstructor(req.user) == true) {  // if admin or instructor of the course
             try {
                 const assignment = await getAssignmentById(req.params.assignmentid);

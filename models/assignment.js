@@ -17,6 +17,42 @@ exports.AssignmentSchema = AssignmentSchema;
 
 
 /*
+ * Patch Schemas for partial update
+ */
+const PatchSchema1 = {
+  courseId: { required: true },
+  title: { required: false },
+  points: { required: false },
+  due: { required: false }
+};
+exports.PatchSchema1 = PatchSchema1;
+
+const PatchSchema2 = {
+  courseId: { required: false },
+  title: { required: true },
+  points: { required: false },
+  due: { required: false }
+};
+exports.PatchSchema2 = PatchSchema2;
+
+const PatchSchema3 = {
+  courseId: { required: false },
+  title: { required: false },
+  points: { required: true },
+  due: { required: false }
+};
+exports.PatchSchema3 = PatchSchema3;
+
+const PatchSchema4 = {
+  courseId: { required: false },
+  title: { required: false },
+  points: { required: false },
+  due: { required: true }
+};
+exports.PatchSchema4 = PatchSchema4;
+
+
+/*
  * Helper function: Check if user is an instructor of a course
  */
 exports.isInstructor = async (userId) => {
@@ -87,9 +123,25 @@ async function updateAssignmentById(assignmentid, assignment) {
   assignment = extractValidFields(assignment, AssignmentSchema);
   const db = getDBReference();
   const collection = db.collection('Assignments');
+  
   if (!ObjectId.isValid(assignmentid)) {
       return null;
   } else {
+      existingAssignment = await getAssignmentById(assignmentid);
+      
+      if (assignment.courseId == undefined) {
+        assignment.courseId = existingAssignment.courseId;
+      }
+      if (assignment.title == undefined) {
+        assignment.title = existingAssignment.title;
+      }
+      if (assignment.points == undefined) {
+        assignment.points = existingAssignment.points;
+      }
+      if (assignment.due == undefined) {
+        assignment.due = existingAssignment.due;
+      }
+     
       const results = await collection.update({ _id: ObjectId(assignmentid) }, 
         { courseId: assignment.courseId, title: assignment.title, points: assignment.points, due: assignment.due })
       return results;
