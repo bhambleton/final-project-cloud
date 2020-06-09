@@ -1,7 +1,7 @@
 {
 	"info": {
-		"_postman_id": "d4e31775-5fea-4aab-aba1-900b7c348dbf",
-		"name": "Tarpaulin Tests",
+		"_postman_id": "e3be271e-c278-404f-b7d2-0d2f24a9d460",
+		"name": "Tarpaulin Tests (my version) Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
@@ -15,7 +15,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"email\": \"alison.wonderland@tarpaulin.com\",\n\t\"password\": \"beaverfun123\"\n}",
+							"raw": "{\n\t\"email\": \"admin@tarpaulin.com\",\n\t\"password\": \"hunter2\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -43,7 +43,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWRhYjI3MTZhZTEyYzAwMTI5NWJhZjQiLCJyb2xlIjoic3R1ZGVudCIsImlhdCI6MTU5MTM5MDg1NSwiZXhwIjoxNTkxNDc3MjU1fQ.nK_vv_H5A9LryALkpGDFkelney93tvo8fR_9ArSGV7g",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWRlYWRiZmFmOTVhNjhkOWNlMTFmZTMiLCJyb2xlIjoic3R1ZGVudCIsImlhdCI6MTU5MTY1MTg5NCwiZXhwIjoxNTkxNzM4Mjk0fQ.uztQsS_QdTXZKTla-FGlPAgUg2HmS1a_a2wLJGJR2b4",
 									"type": "string"
 								}
 							]
@@ -69,7 +69,7 @@
 							"variable": [
 								{
 									"key": "userid",
-									"value": "5edab2716ae12c001295baf4"
+									"value": "5edeadbfaf95a68d9ce11fe3"
 								}
 							]
 						}
@@ -79,11 +79,21 @@
 				{
 					"name": "Add a new user",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWRkNjhjYTMwZjIwY2Q3MWNiZDJhM2IiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTE2NjE1NTAsImV4cCI6MTU5MTc0Nzk1MH0.oVk196RVEU7M3Xx6dxmdiAsyaIwHE7ZdZJ2vBZtbqRs",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"name\": \"Alison Wonderland\",\n\t\"password\": \"beaverfun123\",\n\t\"email\": \"alison.wonderland@tarpaulin.com\",\n\t\"role\": \"student\"\n}",
+							"raw": "{\n\t\"name\": \"Alison Wonderland\",\n\t\"password\": \"beaverfun123\",\n\t\"email\": \"wonderlanda@tarpaulin.com\",\n\t\"role\": \"instructor\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -114,7 +124,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "87bcf9ec-f131-4b6c-b7cb-d7d07ff5247b",
+								"id": "7201ba21-8466-4fec-8826-e010950f668e",
 								"exec": [
 									"\r",
 									"if (!pm.environment.has(\"counter\")) {\r",
@@ -143,7 +153,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "0fa70604-be73-44aa-851d-ad5b26471a53",
+								"id": "bfe95cea-d836-4a29-96eb-aacb5718aa14",
 								"exec": [
 									"pm.test(\"Rate Limit Reached\", function(){\r",
 									"    if(parseInt(pm.environment.get(\"counter\")) == parseInt(pm.environment.get(\"counter\")))\r",
@@ -167,6 +177,149 @@
 							"path": [
 								"users",
 								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "assignments",
+			"item": [
+				{
+					"name": "Create a new Assignment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWRkNjhjYTMwZjIwY2Q3MWNiZDJhM2IiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTE2NzA4ODcsImV4cCI6MTU5MTc1NzI4N30.l0Va5yBlf-6Wv0HWpTf9l9JLaWVbCYXvoOc2tXGgitU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"courseId\": \"5eded1d8645cb5fdf30afdbb\",\r\n\t\"title\": \"assignment4\",\r\n\t\"points\": 100,\r\n\t\"due\": \"2019-06-14T17:00:00-07:00\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/assignments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"assignments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch data about a specific Assignment",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/assignments/:assignmentid",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"assignments",
+								":assignmentid"
+							],
+							"variable": [
+								{
+									"key": "assignmentid",
+									"value": "5edf02e86fa1ed14e49cc2ae"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update data for a specific Assignment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWRkNjhjYTMwZjIwY2Q3MWNiZDJhM2IiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTE2NzA4ODcsImV4cCI6MTU5MTc1NzI4N30.l0Va5yBlf-6Wv0HWpTf9l9JLaWVbCYXvoOc2tXGgitU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"courseId\": \"5eded1d8645cb5fdf30afdbb\",\r\n\t\"title\": \"updatedassignment4\",\r\n\t\"points\": 100,\r\n\t\"due\": \"2019-06-14T17:00:00-07:00\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/assignments/:assignmentid",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"assignments",
+								":assignmentid"
+							],
+							"variable": [
+								{
+									"key": "assignmentid",
+									"value": "5edefb8e4daba288dc69e91f"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove a specific Assignment from the database",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWRlZGI5NjZmZTE1NTFkMDQ4ZmEyODQiLCJyb2xlIjoiaW5zdHJ1Y3RvciIsImlhdCI6MTU5MTY2MzU1MSwiZXhwIjoxNTkxNzQ5OTUxfQ.zflaBC3zqUoITLsGMX4qYqHZCXqAFZOooeVCfYMiKrY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/assignments/:assignmentid",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"assignments",
+								":assignmentid"
+							],
+							"variable": [
+								{
+									"key": "assignmentid",
+									"value": "5edf0986115c963bc0da0e0e"
+								}
 							]
 						}
 					},
