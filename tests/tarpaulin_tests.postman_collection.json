@@ -9,7 +9,7 @@
 			"name": "users",
 			"item": [
 				{
-					"name": "user login",
+					"name": "User Login",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -43,7 +43,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWRlYWRiZmFmOTVhNjhkOWNlMTFmZTMiLCJyb2xlIjoic3R1ZGVudCIsImlhdCI6MTU5MTY1MTg5NCwiZXhwIjoxNTkxNzM4Mjk0fQ.uztQsS_QdTXZKTla-FGlPAgUg2HmS1a_a2wLJGJR2b4",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWRiZjk4Yzk2MzJjMDNlZTVkNGIxOWYiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTE0OTc1MjQsImV4cCI6MTU5MTU4MzkyNH0.dehvM08NkSUGBludOtBAXFuzZBxVKNv6P6SkTGdgoHM",
 									"type": "string"
 								}
 							]
@@ -107,6 +107,419 @@
 							],
 							"path": [
 								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWRiZjk4Yzk2MzJjMDNlZTVkNGIxOWYiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTE0OTcwMDgsImV4cCI6MTU5MTU4MzQwOH0.6uIkJRLA_7mvEMRYVGsadOxl1mnr4Z1iG0Ug7FI_kEo",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Rate Limiting",
+			"item": [
+				{
+					"name": "Test Limit",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "87bcf9ec-f131-4b6c-b7cb-d7d07ff5247b",
+								"exec": [
+									"\r",
+									"if (!pm.environment.has(\"counter\")) {\r",
+									"    console.log(\"Setting counter now\");\r",
+									"    pm.environment.set(\"counter\", 0);\r",
+									" }\r",
+									"\r",
+									" if(!pm.environment.has(\"rateLimit\")){\r",
+									"     pm.environment.set(\"rateLimit\", 10);\r",
+									" }\r",
+									" \r",
+									"let currentCount = parseInt(pm.environment.get(\"counter\")); \r",
+									"let numberOfLoops = parseInt(pm.environment.get(\"rateLimit\"));\r",
+									"\r",
+									"if (currentCount < numberOfLoops) {\r",
+									"    postman.setNextRequest(\"Test Limit\");\r",
+									"}\r",
+									"\r",
+									"\r",
+									"currentCount++;\r",
+									"pm.environment.set(\"counter\", currentCount);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"id": "0fa70604-be73-44aa-851d-ad5b26471a53",
+								"exec": [
+									"pm.test(\"Rate Limit Reached\", function(){\r",
+									"    if(parseInt(pm.environment.get(\"counter\")) == parseInt(pm.environment.get(\"counter\")))\r",
+									"        pm.expect(pm.response.code).to.be.oneOf([429]);\r",
+									"    else\r",
+									"        pm.expect(pm.response.code).to.be.oneOf([401, 200, 201, 500, 403, 404]);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "Courses",
+			"item": [
+				{
+					"name": "Student",
+					"item": [
+						{
+							"name": "Add Students to Course",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWRiZjk4Yzk2MzJjMDNlZTVkNGIxOWYiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTE0OTc1MjQsImV4cCI6MTU5MTU4MzkyNH0.dehvM08NkSUGBludOtBAXFuzZBxVKNv6P6SkTGdgoHM",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"add\": [\r\n    \"5edbf98c9632c03ee5d4b1a0\",\r\n    \"5edc3a487e95810012bcf607\"\r\n  ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/courses/:id/students",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"courses",
+										":id",
+										"students"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "5edc3caa58e10f0012576024"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Remove Students from Course",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWRiZjk4Yzk2MzJjMDNlZTVkNGIxOWYiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTE0OTc1MjQsImV4cCI6MTU5MTU4MzkyNH0.dehvM08NkSUGBludOtBAXFuzZBxVKNv6P6SkTGdgoHM",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"remove\": [\r\n    \"5edbf98c9632c03ee5d4b1a0\"\r\n  ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/courses/:id/students",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"courses",
+										":id",
+										"students"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "5edc3c10503549001281832d"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Students in Course",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": ""
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Add Course",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWRiZjk4Yzk2MzJjMDNlZTVkNGIxOWYiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTE0OTEzNjEsImV4cCI6MTU5MTU3Nzc2MX0.5v5EGQw978G50X8pV8y44XVZgLjc2apPpo-Ux84ZMCg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"subject\": \"MATH\",\n\t\"number\": 123,\n\t\"title\": \"Discrete\",\n\t\"instructorID\": 1,\n\t\"term\": \"fall 202\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/courses",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"courses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Courses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/courses",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"courses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch Course Info",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/courses/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"courses",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5edc3caa58e10f0012576024"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Roster",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/courses/:id/roster",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"courses",
+								":id",
+								"roster"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5edc3caa58e10f0012576024"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Course",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWRiZjk4Yzk2MzJjMDNlZTVkNGIxOWYiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTE0OTc1MjQsImV4cCI6MTU5MTU4MzkyNH0.dehvM08NkSUGBludOtBAXFuzZBxVKNv6P6SkTGdgoHM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"subject\": \"CS\",\r\n  \"number\": 493,\r\n  \"title\": \"Cloud Application Development\",\r\n  \"term\": \"sp19\",\r\n  \"instructorId\": \"123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/courses/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"courses",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5edc3caa58e10f0012576024"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Course",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWRiZjk4Yzk2MzJjMDNlZTVkNGIxOWYiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTE0OTc1MjQsImV4cCI6MTU5MTU4MzkyNH0.dehvM08NkSUGBludOtBAXFuzZBxVKNv6P6SkTGdgoHM",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/courses/:id",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"courses",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5edc41a258e10f0012576025"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Course Assignments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/courses/:id/assignments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"courses",
+								":id",
+								"assignments"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
 							]
 						}
 					},
