@@ -54,14 +54,14 @@ exports.insertNewCourse = insertNewCourse;
 
 async function updateCourse(id, course) {
     course = extractValidFields(course, CourseSchema);
-    console.log("==course", course);
+   
     const db = getDBReference();
     const collection = db.collection('Courses');
     const result = await collection.updateOne(
         { _id: ObjectId(id)},
         { $set: course}
         );
-    console.log("==result", result);
+    
     return id;
 }
 exports.updateCourse = updateCourse;
@@ -121,7 +121,10 @@ async function getTeacherIdByCourseId(id) {
      * specified Course.
      */
     const Course = await getCourseById(id);
-    return Course.instructorID;
+    if(Course){
+     return Course.instructorID;
+    }
+    return null;
 }
 exports.getTeacherIdByCourseId = getTeacherIdByCourseId;
 
