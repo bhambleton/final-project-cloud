@@ -10,6 +10,7 @@ const {
   getUserByEmail,
   getUserInfoById,
   validateUser,
+  getUsers,
   containsEmail
 } = require('../models/user');
 
@@ -103,6 +104,31 @@ router.get('/:id', requireAuthentication, async (req, res, next) => {
         error: "Unauthorized to access specified resource."
       });
     }
+});
+
+
+// Get a list of users
+router.get('/', requireAuthentication, async (req, res, next) => {
+  if (req.role == 'admin') {
+    try {
+      const users = await getUsers(); 
+
+      if (users) {
+        res.status(200).send(users);
+      } else {
+        next();
+      }
+    } catch (err) {
+      console.error(" == error:", err);
+      res.status(500).send({
+        error: "Error fetching user info. Try again later."
+      });
+    }
+  } else {
+    res.status(403).send({
+      error: "Unauthorized to access specified resource."
+    });
+  }
 });
 
 module.exports = router;

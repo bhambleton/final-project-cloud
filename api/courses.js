@@ -1,12 +1,14 @@
 const router = require('express').Router();
 const { validateAgainstSchema } = require('../lib/validation');
 const { generateAuthToken, requireAuthentication, checkAuthentication } = require('../lib/auth');
+const { createObjectCsvWriter } = require('csv-writer');
+const fs = require('fs');
 const {
     CourseSchema,
     insertNewCourse,
     getCourseById,
-    getCourseStudentsById,
-    getCourseAssignmentsById,
+    getCourseInfoById,
+    getStudentsInCourse,
     getCoursesPage,
     deleteCourseById,
     getTeacherIdByCourseId,
@@ -70,18 +72,19 @@ router.post('/', checkAuthentication, async (req, res) => {
 
     }
 });
-router.post('/:id/students', async (req, res, next) => {
+
+// Update the enrollment for a course
+router.post('/:id/students', checkAuthentication, async (req, res, next) => {
+    const course = await getCourseById(req.params.id);
+    if(!course)
+        next();
+    else{ 
     const teacherID = await getTeacherIdByCourseId(req.params.id);
-    if (req.role == 'admin' || req.user != teacherID) {
+    if (req.role == 'admin' || req.user == teacherID) {
         if(req.body.add || req.body.remove){
             try {
-                const id = await updateCourseEnrollment(req.params.id, req.body);
-                res.status(201).send({
-                    id: id,
-                    links: {
-                        Course: `/Courses/${id}`
-                    }
-                });
+                await updateCourseEnrollment(req.params.id, req.body);
+                res.status(200).send();
             } catch (err) {
                 console.error(err);
                 res.status(500).send({
@@ -97,45 +100,111 @@ router.post('/:id/students', async (req, res, next) => {
         res.status(403).send({
             error: "Invalid permissions."
         });
-
     }
+}
 });
-// router.get('/:id/students', async (req, res, next) => {
-//     try {
-//         const Course = await getCourseStudentsById(req.params.id);
-//         if (Course) {
-//             res.status(200).send(Course);
-//         } else {
-//             next();
-//         }
-//     } catch (err) {
-//         console.error(err);
-//         res.status(500).send({
-//             error: "Unable to fetch Course's students.  Please try again later."
-//         });
-//     }
-// });
 
-// router.get('/:id/assignments', async (req, res, next) => {
-//     try {
-//         const Course = await getCourseAssignmentsById(req.params.id);
-//         if (Course) {
-//             res.status(200).send(Course);
-//         } else {
-//             next();
-//         }
-//     } catch (err) {
-//         console.error(err);
-//         res.status(500).send({
-//             error: "Unable to fetch Course's assignments.  Please try again later."
-//         });
-//     }
-// });
+// Get all of the students in a course
+ router.get('/:id/students', checkAuthentication, async (req, res, next) => {
+    const teacherID = await getTeacherIdByCourseId(req.params.id);
+    if(!teacherID){
+      next();
+    }else{
+    if (req.role == 'admin' || req.user == teacherID) {
+     try {
+         const Course = await getCourseById(req.params.id);
+         if (Course) {
+             res.status(200).send({
+                 "students": Course.students
+             });
+         } else {
+             next();
+         }
+     } catch (err) {
+         console.error(err);
+         res.status(500).send({
+             error: "Unable to fetch Course's students.  Please try again later."
+         });
+     }
+    } else {
+        res.status(403).send({
+            error: "Invalid permissions."
+        });
+    }
+   }
+  });
+
+  // Get a roster of a course (.csv)
+ router.get('/:id/roster', checkAuthentication, async (req, res, next) => {
+    const teacherID = await getTeacherIdByCourseId(req.params.id);
+    if(!teacherID){
+      next();
+    }else{
+    if (req.role == 'admin' || req.user == teacherID) {
+     try {
+         const Course = await getCourseById(req.params.id);
+        
+         if (Course) {
+            const students = await getStudentsInCourse(Course);
+            fs.unlink('./file.csv', function(err) {
+                if(err && err.code == 'ENOENT') {
+                    console.info("File doesn't exist, won't remove it.");
+                } else if (err) {
+                    console.error("Error occurred while trying to remove file");
+                }
+            });
+            const csvWriter = createObjectCsvWriter({
+                path: './file.csv',
+                header: [
+                    {id: '_id', title: 'ID'},
+                    {id: 'name', title: 'NAME'},
+                    {id: 'email', title: 'EMAIL'}
+                ]
+            });
+            await csvWriter.writeRecords(students);
+            res.status(200).type("text/csv");
+            fs.createReadStream("./file.csv").pipe(res);
+            
+         } else {
+             next();
+         }
+     } catch (err) {
+         console.error(err);
+         res.status(500).send({
+             error: "Unable to fetch Course's students.  Please try again later."
+         });
+     }
+    } else {
+        res.status(403).send({
+            error: "Invalid permissions."
+        });
+    }
+   }   
+  });
+
+  // Get all of the assignments for a course
+router.get('/:id/assignments', async (req, res, next) => {
+     try {
+         const Course = await getCourseById(req.params.id);
+         if (Course) {
+             res.status(200).send({
+                 "assignments": Course.assignments
+             });
+         } else {
+             next();
+         }
+     } catch (err) {
+         console.error(err);
+         res.status(500).send({
+             error: "Unable to fetch Course's assignments.  Please try again later."
+         });
+     }
+});
 
 // Fetch Info about specific course (w/out assignments & students enrolled)
 router.get('/:id', async (req, res, next) => {
     try {
-        const Course = await getCourseById(req.params.id);
+        const Course = await getCourseInfoById(req.params.id);
         if (Course) {
             res.status(200).send(Course);
         } else {
@@ -149,9 +218,13 @@ router.get('/:id', async (req, res, next) => {
     }
 });
 
+// Partial update of a course (no students or assignments)
 router.patch('/:id', requireAuthentication, async (req, res, next) => {
     const teacherID = await getTeacherIdByCourseId(req.params.id);
-    if (req.role == 'admin' || req.user != teacherID) {
+    if(!teacherID){
+      next();
+    }else{
+    if (req.role == 'admin' || req.user == teacherID) {
         if (req.body.subject || req.body.number || req.body.title || req.body.instructorID || req.body.term){
             try {
                 const id = await updateCourse(req.params.id, req.body);
@@ -176,10 +249,11 @@ router.patch('/:id', requireAuthentication, async (req, res, next) => {
         res.status(403).send({
             error: "Invalid permissions."
         });
-
+     }
     }
 });
 
+// Delete a course
 router.delete('/:id', checkAuthentication, async (req, res,next) => {
     if (req.role == 'admin') {
         try{
