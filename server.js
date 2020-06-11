@@ -20,6 +20,13 @@ app.use(rateLimit);
  */
 app.use('/', api);
 
+app.use('*', function (err, req, res, next) {
+  console.error("== error:", err);
+  res.status(500).send({
+    error: "An error occurred. Try again later."
+  });
+});
+
 app.use('*', function (req, res, next) {
     res.status(404).json({
         error: "Requested resource " + req.originalUrl + " does not exist"

@@ -2,7 +2,7 @@ const { ObjectId } = require('mongodb');
 
 const { getDBReference } = require('../lib/mongo');
 const { extractValidFields } = require('../lib/validation');
-
+const { isStudentEnrolled } = require('./course');
 
 /*
  * Assignment Schema
@@ -59,24 +59,23 @@ exports.isInstructor = async (userId) => {
   const db = getDBReference();
   const user_collection = db.collection('Users');
   const courses_collection = db.collection('Courses');
-  
+
   if (ObjectId.isValid(userId)) {  // get data pertaining to user
     const results = await user_collection.find({ _id: new ObjectId(userId) })
         .toArray();
     let user = results[0];
-    
+
     if (user != undefined && user.role === 'instructor') {  //get courses with this userId
       const courses = await courses_collection.find({ instructorId: userId })
         .toArray();
-      
+
       if (courses[0] != undefined) {  // this instructor is teaching this course
         return true;
-      } 
+      }
     }
   }
   return false;
 };
-
 
 /*
  * Insert new Assignment into database
@@ -85,14 +84,14 @@ async function insertNewAssignment(assignment) {
   assignment = extractValidFields(assignment, AssignmentSchema);
   const db = getDBReference();
   const collection = db.collection('Assignments');
-  
+
   const repeated = await collection.find({ courseId: assignment.courseId, title: assignment.title, points: assignment.points, due: assignment.due })
         .toArray();
-  
+
   if (repeated[0] != undefined) {  // assignment to insert already exists in database
     return 0;
   }
-  
+
   const result = await collection.insertOne(assignment);
   return result.insertedId;
 }
@@ -123,12 +122,12 @@ async function updateAssignmentById(assignmentid, assignment) {
   assignment = extractValidFields(assignment, AssignmentSchema);
   const db = getDBReference();
   const collection = db.collection('Assignments');
-  
+
   if (!ObjectId.isValid(assignmentid)) {
       return null;
   } else {
       existingAssignment = await getAssignmentById(assignmentid);
-      
+
       if (assignment.courseId == undefined) {
         assignment.courseId = existingAssignment.courseId;
       }
@@ -141,8 +140,8 @@ async function updateAssignmentById(assignmentid, assignment) {
       if (assignment.due == undefined) {
         assignment.due = existingAssignment.due;
       }
-     
-      const results = await collection.update({ _id: ObjectId(assignmentid) }, 
+
+      const results = await collection.updateOne({ _id: ObjectId(assignmentid) },
         { courseId: assignment.courseId, title: assignment.title, points: assignment.points, due: assignment.due })
       return results;
   }

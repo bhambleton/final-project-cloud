@@ -54,14 +54,14 @@ exports.insertNewCourse = insertNewCourse;
 
 async function updateCourse(id, course) {
     course = extractValidFields(course, CourseSchema);
-   
+
     const db = getDBReference();
     const collection = db.collection('Courses');
     const result = await collection.updateOne(
         { _id: ObjectId(id)},
         { $set: course}
         );
-    
+
     return id;
 }
 exports.updateCourse = updateCourse;
@@ -69,7 +69,7 @@ exports.updateCourse = updateCourse;
 async function updateCourseEnrollment(id, course) {
      const db = getDBReference();
      const collection = db.collection('Courses');
-     
+
      if(course.add){
         const result = await collection.updateOne(
             { _id: ObjectId(id) },
@@ -83,7 +83,7 @@ async function updateCourseEnrollment(id, course) {
             { $pullAll: { "students" : course.remove }}
         );
     }
-     
+
     return id;
 }
 exports.updateCourseEnrollment = updateCourseEnrollment;
@@ -111,7 +111,7 @@ async function getStudentsInCourse(course){
             students.push(student[0]);
     }
 
-    return students; 
+    return students;
 }
 exports.getStudentsInCourse = getStudentsInCourse;
 
@@ -154,3 +154,10 @@ async function deleteCourseById(id) {
     return result.deletedCount > 0;
 }
 exports.deleteCourseById = deleteCourseById;
+
+async function isStudentEnrolled(userid, courseid) {
+  const Course = await getCourseById(courseid);
+
+  return Course.students.includes(userid);
+}
+exports.isStudentEnrolled = isStudentEnrolled;

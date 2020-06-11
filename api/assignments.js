@@ -1,4 +1,7 @@
 const router = require('express').Router();
+const multer = require('multer');
+const moment = require('moment');
+
 const { validateAgainstSchema } = require('../lib/validation');
 const { requireAuthentication } = require('../lib/auth');
 
@@ -13,8 +16,19 @@ const {
     getAssignmentById,
     removeAssignmentsById,
     updateAssignmentById
-  } = require('../models/assignment');
+} = require('../models/assignment');
 
+const { isStudentEnrolled } = require('../models/course');
+
+const { saveSubmissionFile,
+        getSubmissionsByAssignmentId,
+        removeUploadedFile,
+        getFileDownloadStreamById
+} = require('../models/submission');
+
+const upload = multer({
+    dest: `${__dirname}/uploads`
+});
 
 // Add a new Assignment
 router.post('/', requireAuthentication, async (req, res) => {
@@ -30,7 +44,7 @@ router.post('/', requireAuthentication, async (req, res) => {
                     res.status(500).send({
                         error: "Assignment already exists in database.  Please insert a new Assignment."
                     });
-                }   
+                }
             } catch (err) {
                 console.error(err);
                 res.status(500).send({
@@ -72,8 +86,8 @@ router.get('/:assignmentid', async (req, res, next) => {
 
 // Update data for a specific Assignment
 router.patch('/:assignmentid', requireAuthentication, async (req, res, next) => {
-    if (validateAgainstSchema(req.body, PatchSchema1) || validateAgainstSchema(req.body, PatchSchema2) || 
-     validateAgainstSchema(req.body, PatchSchema3) || validateAgainstSchema(req.body, PatchSchema4)) {    
+    if (validateAgainstSchema(req.body, PatchSchema1) || validateAgainstSchema(req.body, PatchSchema2) ||
+     validateAgainstSchema(req.body, PatchSchema3) || validateAgainstSchema(req.body, PatchSchema4)) {
         if (req.role == "admin" || await isInstructor(req.user) == true) {  // if admin or instructor of the course
             try {
                 const assignment = await getAssignmentById(req.params.assignmentid);
@@ -139,5 +153,106 @@ router.delete('/:assignmentid', requireAuthentication, async (req, res, next) =>
     }
 });
 
+//fetch assignment submissions
+router.get('/:assignmentid/submissions', requireAuthentication, async (req, res, next) => {
+  if (req.role == 'admin' || await isInstructor(req.user)) {
+      try {
+        const submissions = await getSubmissionsByAssignmentId(req.params.assignmentid, (parseInt(req.query.page) || 1));
+        if (submissions) {
+          res.status(200).send(submissions);
+        } else {
+          //assignment does not exist
+          next();
+        }
+      } catch (err) {
+        console.error("== error:", err);
+      }
+  } else {
+    res.status(403).send({
+        error: "The request was not made by an authenticated User (admin or instructor)."
+    });
+  }
+});
+
+//upload new submission for an assignment
+router.post('/:assignmentid/submissions', requireAuthentication, upload.single('file'), async (req, res, next) =>{
+  //check if user is enrolled in the course this assignment belongs to
+  if (req.file){
+    try {
+      const assignment = await getAssignmentById(req.params.assignmentid);
+      if (assignment) {
+        if (await isStudentEnrolled(req.user, assignment.courseId)) {
+          //student is enrolled in this course
+
+          const time = moment().format();
+
+          const submission = {
+            contentType: req.file.mimetype,
+            filename: req.file.filename,
+            originalname: req.file.originalname,
+            path: req.file.path,
+            userId: req.user,
+            timestamp: time,
+            assignmentId: req.params.assignmentid
+          };
+
+          console.log("==file to upload:", submission);
+
+          //save to mongodb
+          const id = await saveSubmissionFile(submission);
+          //remove from api server file system
+          await removeUploadedFile(req.file.path);
+
+          res.status(201).send({
+            id: id,
+            links: {
+              submission: `/assignments/${req.params.assignmentid}/submissions/${id}`
+            }
+          });
+        } else {
+          //not enrolled in this course
+          res.status(403).send({
+              error: "Request made be user not enrolled in this course."
+          });
+        }
+      } else {
+        //assignment does not exist
+        next();
+      }
+    } catch (err) {
+      console.error("==error:", err);
+      res.status(500).send({
+        error: "Error uploading assignment. Try again later."
+      });
+    }
+  } else {
+    res.status(400).send({
+        error: "Request body does not contain valid fields."
+    });
+  }
+
+});
+
+router.get('/:assignmentid/submissions/:submissionid', async (req, res, next) => {
+  try {
+    getFileDownloadStreamById(req.params.submissionid)
+      .on('file', (file) => {
+        res.status(200).type(file.metadata.contentType);
+      })
+      .on('error', (err) => {
+        if (err.code === 'ENOENT') {
+          next();
+        } else {
+          next(err);
+        }
+      })
+      .pipe(res);
+  } catch (err) {
+    console.error("== error:", err);
+    res.status(500).send({
+      error: "Unable to fetch file. Please try again later."
+    });
+  }
+});
 
 module.exports = router;
