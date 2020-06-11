@@ -233,24 +233,30 @@ router.post('/:assignmentid/submissions', requireAuthentication, upload.single('
 
 });
 
-router.get('/:assignmentid/submissions/:submissionid', async (req, res, next) => {
-  try {
-    getFileDownloadStreamById(req.params.submissionid)
-      .on('file', (file) => {
-        res.status(200).type(file.metadata.contentType);
-      })
-      .on('error', (err) => {
-        if (err.code === 'ENOENT') {
-          next();
-        } else {
-          next(err);
-        }
-      })
-      .pipe(res);
-  } catch (err) {
-    console.error("== error:", err);
-    res.status(500).send({
-      error: "Unable to fetch file. Please try again later."
+router.get('/:assignmentid/submissions/:submissionid', requireAuthentication, async (req, res, next) => {
+  if (req.role == 'admin' || await isInstructor(req.user)) {
+    try {
+      getFileDownloadStreamById(req.params.submissionid)
+        .on('file', (file) => {
+          res.status(200).type(file.metadata.contentType);
+        })
+        .on('error', (err) => {
+          if (err.code === 'ENOENT') {
+            next();
+          } else {
+            next(err);
+          }
+        })
+        .pipe(res);
+    } catch (err) {
+      console.error("== error:", err);
+      res.status(500).send({
+        error: "Unable to fetch file. Please try again later."
+      });
+    }
+  } else {
+    res.status(403).send({
+        error: "The request was not made by an authenticated User (admin or instructor)."
     });
   }
 });
