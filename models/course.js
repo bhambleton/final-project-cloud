@@ -158,6 +158,6 @@ exports.deleteCourseById = deleteCourseById;
 async function isStudentEnrolled(userid, courseid) {
   const Course = await getCourseById(courseid);
 
-  return Course.students.includes(userid);
+  return Course ? Course.students.includes(userid) : false;
 }
 exports.isStudentEnrolled = isStudentEnrolled;
