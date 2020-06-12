@@ -141,7 +141,7 @@ async function updateAssignmentById(assignmentid, assignment) {
         assignment.due = existingAssignment.due;
       }
 
-      const results = await collection.updateOne({ _id: ObjectId(assignmentid) },
+      const results = await collection.update({ _id: ObjectId(assignmentid) },
         { courseId: assignment.courseId, title: assignment.title, points: assignment.points, due: assignment.due })
       return results;
   }
