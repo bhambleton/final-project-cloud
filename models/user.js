@@ -11,7 +11,7 @@ const UserSchema = {
   name: { required: true },
   email: { required: true },
   password: { required: true },
-  role: { required: false } 
+  role: { required: false }
 };
 exports.UserSchema = UserSchema;
 
@@ -64,13 +64,13 @@ exports.getUserInfoById = async (id) => {
     //  TODO: change roles to enum values
     if (user.role === 'instructor') {
       //get courses with this userId
-      const courses = await courses_collection.find({ instructorId: new ObjectId(id) })
+      const courses = await courses_collection.find({ instructorID: id })
         .toArray();
 
       user['courses'] = courses;
 
     } else if (user.role === 'student') {
-      const courses = await courses_collection.find({ studentId: new ObjectId(id) })
+      const courses = await courses_collection.find({ students: id })
         .toArray();
 
       user['courses'] = courses;
@@ -96,7 +96,7 @@ exports.getUsers = async () => {
         .project({ password: 0 })
         .toArray();
 
-    return results; 
+    return results;
 };
 
 /*
@@ -112,9 +112,9 @@ exports.getUserProjById = async (id, projection) => {
    const results = await user_collection.find({ _id: new ObjectId(id) })
        .project(projection)
        .toArray();
-       return results; 
+       return results;
   }else {
-   return null; 
+   return null;
   }
 };
 
