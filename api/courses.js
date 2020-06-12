@@ -13,7 +13,8 @@ const {
     deleteCourseById,
     getTeacherIdByCourseId,
     updateCourse,
-    updateCourseEnrollment
+    updateCourseEnrollment,
+    getAssignmentsByCourse
 } = require('../models/course');
 
 //Get all courses
@@ -187,8 +188,9 @@ router.get('/:id/assignments', async (req, res, next) => {
      try {
          const Course = await getCourseById(req.params.id);
          if (Course) {
+             const assignments = await getAssignmentsByCourse(req.params.id);
              res.status(200).send({
-                 "assignments": Course.assignments
+                 "assignments": assignments
              });
          } else {
              next();

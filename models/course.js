@@ -161,3 +161,14 @@ async function isStudentEnrolled(userid, courseid) {
   return Course ? Course.students.includes(userid) : false;
 }
 exports.isStudentEnrolled = isStudentEnrolled;
+
+async function getAssignmentsByCourse(course) {
+    const db = getDBReference();
+    const collection = db.collection('Assignments');
+
+    const results = await collection.find({ courseId: course })
+        .toArray();
+    return results[0];
+}
+
+exports.getAssignmentsByCourse = getAssignmentsByCourse;
