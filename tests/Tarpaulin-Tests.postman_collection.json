@@ -210,7 +210,7 @@
 								"id": "1207a073-3acd-4263-8c39-9246e6ea576e",
 								"exec": [
 									"pm.test(\"Rate Limit Reached\", function(){\r",
-									"    if(parseInt(pm.environment.get(\"counter\")) == parseInt(pm.environment.get(\"counter\")))\r",
+									"    if(parseInt(pm.environment.get(\"rateLimit\")) < parseInt(pm.environment.get(\"counter\")))\r",
 									"        pm.expect(pm.response.code).to.be.oneOf([429]);\r",
 									"    else\r",
 									"        pm.expect(pm.response.code).to.be.oneOf([401, 200, 201, 500, 403, 404]);\r",
