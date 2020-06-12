@@ -85,9 +85,9 @@ router.post('/', checkAuthentication, async (req, res,next) => {
 
 });
 
-// Login User
+// Get User info
 router.get('/:id', requireAuthentication, async (req, res, next) => {
-    if (req.user == req.params.id) {
+    if (req.role == 'admin' || req.user == req.params.id) {
       try {
         const user = await getUserInfoById(req.params.id);
 
@@ -114,7 +114,7 @@ router.get('/:id', requireAuthentication, async (req, res, next) => {
 router.get('/', requireAuthentication, async (req, res, next) => {
   if (req.role == 'admin') {
     try {
-      const users = await getUsers(); 
+      const users = await getUsers();
 
       if (users) {
         res.status(200).send(users);

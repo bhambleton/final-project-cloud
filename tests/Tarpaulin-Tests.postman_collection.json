@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "e3be271e-c278-404f-b7d2-0d2f24a9d460",
+		"_postman_id": "6c11c8b3-4ff7-405c-8f46-6343a8114c85",
 		"name": "Tarpaulin Tests (my version) Copy",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -15,7 +15,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"email\": \"admin@tarpaulin.com\",\n\t\"password\": \"hunter2\"\n}",
+							"raw": "{\n\t\"email\": \"benny.beaver@tarpaulin.com\",\n\t\"password\": \"beaverfun123\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -138,6 +138,33 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Admin Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"admin@tarpaulin.com\",\n\t\"password\": \"hunter2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
 				}
 			],
 			"protocolProfileBehavior": {}
@@ -151,7 +178,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "87bcf9ec-f131-4b6c-b7cb-d7d07ff5247b",
+								"id": "f90e9053-4a61-4e22-b3a6-509ca21304f8",
 								"exec": [
 									"\r",
 									"if (!pm.environment.has(\"counter\")) {\r",
@@ -180,7 +207,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "0fa70604-be73-44aa-851d-ad5b26471a53",
+								"id": "1207a073-3acd-4263-8c39-9246e6ea576e",
 								"exec": [
 									"pm.test(\"Rate Limit Reached\", function(){\r",
 									"    if(parseInt(pm.environment.get(\"counter\")) == parseInt(pm.environment.get(\"counter\")))\r",
@@ -329,7 +356,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWRiZjk4Yzk2MzJjMDNlZTVkNGIxOWYiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTE0OTEzNjEsImV4cCI6MTU5MTU3Nzc2MX0.5v5EGQw978G50X8pV8y44XVZgLjc2apPpo-Ux84ZMCg",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWUxNzNkMmE4Y2Q5MGIxMTg2YzVjNWIiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTE4MzM1ODEsImV4cCI6MTU5MTkxOTk4MX0.Jl9iakgTwyq9e5Orc1U3M9nglS4gIxmNEN_yATzFESE",
 									"type": "string"
 								}
 							]
@@ -338,7 +365,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"subject\": \"MATH\",\n\t\"number\": 123,\n\t\"title\": \"Discrete\",\n\t\"instructorID\": 1,\n\t\"term\": \"fall 202\"\n}",
+							"raw": "{\n\t\"subject\": \"MATH\",\n\t\"number\": 123,\n\t\"title\": \"Discrete\",\n\t\"instructorID\": \"5ee173ff2050ca001430c1aa\",\n\t\"term\": \"fall 202\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -537,7 +564,7 @@
 						{
 							"listen": "prerequest",
 							"script": {
-								"id": "7201ba21-8466-4fec-8826-e010950f668e",
+								"id": "c03662ea-f5f1-426b-a384-08f82720c814",
 								"exec": [
 									"\r",
 									"if (!pm.environment.has(\"counter\")) {\r",
@@ -566,7 +593,7 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "bfe95cea-d836-4a29-96eb-aacb5718aa14",
+								"id": "c2566197-6763-4670-8d05-cbe0e7a9c67a",
 								"exec": [
 									"pm.test(\"Rate Limit Reached\", function(){\r",
 									"    if(parseInt(pm.environment.get(\"counter\")) == parseInt(pm.environment.get(\"counter\")))\r",
@@ -732,6 +759,92 @@
 								{
 									"key": "assignmentid",
 									"value": "5edf0986115c963bc0da0e0e"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "submissions",
+			"item": [
+				{
+					"name": "Submit assignment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWUxNzNkMmE4Y2Q5MGIxMTg2YzVjNWMiLCJyb2xlIjoic3R1ZGVudCIsImlhdCI6MTU5MTgzMzk2OCwiZXhwIjoxNTkxOTIwMzY4fQ.FaVoT0MKlknDLp-Tc3d_CERHZDa6llv_GHo3U3Tb5lA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "",
+									"type": "file",
+									"src": "/Users/brianthomashambleton/Dropbox/School/CS/CS 46X/Program Variables.docx"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/assignments/:id/submissions",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"assignments",
+								":id",
+								"submissions"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5ee174bc2050ca001430c1ac"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "fetch submissions for assignment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWUxOTZmYzNkYjk4MjkxMmVkZDBiNTEiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE1OTE4NDI1NjYsImV4cCI6MTU5MTkyODk2Nn0.o4RD7jGm-qhtmbH9KFCI-0f_ja7Hx2oM5j2q-R1FSRk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/assignments/:id/submissions",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"assignments",
+								":id",
+								"submissions"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5ee1977c35f7a30014ec4f9f"
 								}
 							]
 						}
