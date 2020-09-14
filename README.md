@@ -1,22 +1,21 @@
 # Final-Project-CS493
+
 Final-project-cloud created by GitHub Classroom for CS 493: Cloud Application Development during Spring 2020 at Oregon State University with Rob Hess.
 
-##Team Members: 
+## Team Members: 
 * Min Chew 
 * Brian Hambleton 
 * Thuy-Vy Nguyen 
 * Mateo Rey-Rosa
 
-###API Info
+### API Info
+
 This is an API for a Canvas-like app that can be used by a school for coursework scheduling and submission. 
-
-MongoDB is used to store user and assignment information.
-
-JSON Web Tokens are used for user authentication on most endpoints.
 
 API documentation can be viewed using the openapi specification, found at /public/openapi.yaml, which can be imported into [Swagger](https://swagger.io/tools/swagger-editor/).
 
-###Usage
+### Usage
+
 ```
 $ docker-compose build
 $ docker-compose up
